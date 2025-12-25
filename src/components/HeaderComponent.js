@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import "../Header.css"; // optional external stylesheet
 
 class HeaderComponent extends Component {
     constructor(props) {

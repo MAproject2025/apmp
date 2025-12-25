@@ -1,117 +1,78 @@
-import React, { Component } from 'react'
-import EmployeeService from '../services/EmployeeService';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import EmployeeService from "../services/EmployeeService";
 
-class CreateEmployeeComponent extends Component {
-    constructor(props) {
-        super(props)
+function CreateEmployeeComponent() {
+  const { empno } = useParams();   // empno will be undefined for "add"
+  const navigate = useNavigate();
 
-        this.state = {
-            // step 2
-            id: this.props.match.params.id,
-            empname: '',
-            age: '',
-            salary: ''
-        }
-        this.changeFirstNameHandler = this.changeFirstNameHandler.bind(this);
-        this.changeLastNameHandler = this.changeLastNameHandler.bind(this);
-        this.saveOrUpdateEmployee = this.saveOrUpdateEmployee.bind(this);
+  const [employee, setEmployee] = useState({
+    empname: "",
+    age: "",
+    salary: ""
+  });
+
+  useEffect(() => {
+    if (empno) {   // only fetch if updating
+      EmployeeService.getEmployeeById(empno).then((res) => {
+        setEmployee(res.data);
+      });
     }
+  }, [empno]);
 
-     // step 3
-    componentDidMount(){
-
-        // step 4
-        if(this.state.id === '_add'){
-            return
-        }else{
-            EmployeeService.getEmployeeById(this.state.id).then( (res) =>{
-                let employee = res.data;
-                this.setState({empname: employee.empname,
-                    age: employee.age,
-                    salary : employee.salary
-                });
-            });
-        }        
+  const saveOrUpdateEmployee = (e) => {
+    e.preventDefault();
+    if (empno) {
+      // Update existing employee
+      EmployeeService.updateEmployee(employee, empno).then(() => navigate("/employees"));
+    } else {
+      // Create new employee
+      EmployeeService.createEmployee(employee).then(() => navigate("/employees"));
     }
-    saveOrUpdateEmployee = (e) => {
-        e.preventDefault();
-        let employee = {firstName: this.state.firstName, lastName: this.state.lastName, emailId: this.state.emailId};
-        console.log('employee => ' + JSON.stringify(employee));
+  };
 
-        // step 5
-        if(this.state.id === '_add'){
-            EmployeeService.createEmployee(employee).then(res =>{
-                this.props.history.push('/employees');
-            });
-        }else{
-            EmployeeService.updateEmployee(employee, this.state.id).then( res => {
-                this.props.history.push('/employees');
-            });
-        }
-    }
-    changeFirstNameHandler= (event) => {
-        this.setState({firstName: event.target.value});
-    }
+  const cancel = () => navigate("/employees");
 
-    changeLastNameHandler= (event) => {
-        this.setState({lastName: event.target.value});
-    }
-
-    changeEmailHandler= (event) => {
-        this.setState({emailId: event.target.value});
-    }
-
-    cancel(){
-        this.props.history.push('/employees');
-    }
-
-    getTitle(){
-        if(this.state.id === '_add'){
-            return <h3 className="text-center">Add Employee</h3>
-        }else{
-            return <h3 className="text-center">Update Employee</h3>
-        }
-    }
-    render() {
-        return (
-            <div>
-                <br></br>
-                   <div className = "container">
-                        <div className = "row">
-                            <div className = "card col-md-6 offset-md-3 offset-md-3">
-                                {
-                                    this.getTitle()
-                                }
-                                <div className = "card-body">
-                                    <form>
-                                        <div className = "form-group">
-                                            <label> First Name: </label>
-                                            <input placeholder="First Name" name="firstName" className="form-control" 
-                                                value={this.state.firstName} onChange={this.changeFirstNameHandler}/>
-                                        </div>
-                                        <div className = "form-group">
-                                            <label> Last Name: </label>
-                                            <input placeholder="Last Name" name="lastName" className="form-control" 
-                                                value={this.state.lastName} onChange={this.changeLastNameHandler}/>
-                                        </div>
-                                        <div className = "form-group">
-                                            <label> Email Id: </label>
-                                            <input placeholder="Email Address" name="emailId" className="form-control" 
-                                                value={this.state.emailId} onChange={this.changeEmailHandler}/>
-                                        </div>
-
-                                        <button className="btn btn-success" onClick={this.saveOrUpdateEmployee}>Save</button>
-                                        <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Cancel</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                   </div>
-
-                    </div>
-        )
-    }
+  return (
+    <div className="container">
+      <div className="card col-md-6 offset-md-3">
+        <h3 className="text-center">{empno ? "Update Employee" : "Add Employee"}</h3>
+        <div className="card-body">
+          <form>
+            <div className="form-group">
+              <label>Employee Name:</label>
+              <input
+                type="text"
+                value={employee.empname}
+                onChange={(e) => setEmployee({ ...employee, empname: e.target.value })}
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label>Age:</label>
+              <input
+                type="text"
+                value={employee.age}
+                onChange={(e) => setEmployee({ ...employee, age: e.target.value })}
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label>Salary:</label>
+              <input
+                type="text"
+                value={employee.salary}
+                onChange={(e) => setEmployee({ ...employee, salary: e.target.value })}
+                className="form-control"
+              />
+            </div>
+            <button className="btn btn-success" onClick={saveOrUpdateEmployee}>Save</button>
+            <button className="btn btn-danger" onClick={cancel} style={{ marginLeft: "10px" }}>Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default CreateEmployeeComponent
+export default CreateEmployeeComponent;

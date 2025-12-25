@@ -1,23 +1,17 @@
-import React, { Component } from 'react'
+import React from "react";
+import "../Footer.css"; // optional external stylesheet
 
-class FooterComponent extends Component {
-    constructor(props) {
-        super(props)
+const FooterComponent = () => {
+  return (
+    <footer className="footer">
+      <div className="footer-content">
+        <p>© 2025 <strong>SRV Technologies</strong>. All Rights Reserved.</p>
+        <p className="footer-links">
+          <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a>
+        </p>
+      </div>
+    </footer>
+  );
+};
 
-        this.state = {
-                 
-        }
-    }
-
-    render() {
-        return (
-            <div>
-                <footer className = "footer">
-                    <span className="text-muted">All Rights Reserved 2025 SRV Technologies</span>
-                </footer>
-            </div>
-        )
-    }
-}
-
-export default FooterComponent
+export default FooterComponent;

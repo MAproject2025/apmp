@@ -1,0 +1,24 @@
+.footer {
+  background: linear-gradient(135deg, #1f1c2c, hwb(46 55% 33% / 0));
+  color: #fff;
+  text-align: center;
+  padding: 20px 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.footer-content p {
+  margin: 5px 0;
+}
+
+.footer-links a {
+  color: #ffd700;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
